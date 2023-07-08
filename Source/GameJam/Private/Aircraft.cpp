@@ -229,7 +229,7 @@ void AAircraft::Tick(float DeltaTime)
 
 	Collision->AddTorqueInDegrees(PhysXAngularVelocity, NAME_None, true);
 	AddSpeed();
-	Collision->AddForce(FVector(0.f, 0.f, -15000.f), NAME_None, true);
+	Collision->AddForce(FVector(0.f, 0.f, -1500.f), NAME_None, true);
 	
 	if (ZeroThrottle)
 	{
