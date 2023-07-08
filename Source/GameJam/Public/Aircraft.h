@@ -17,8 +17,14 @@ class GAMEJAM_API AAircraft : public APawn
 	GENERATED_BODY()
 
 private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
 
 public:
@@ -115,6 +121,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UParticleSystem> ExplodeParticles;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UParticleSystem> ImpactParticles;
+	
 	
 	bool bShootButtonPressed;
 	bool bShouldShoot;

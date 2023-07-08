@@ -108,12 +108,17 @@ void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 		FVector TraceStart = SocketLocation.ForwardVector;
 		FVector TracEnd = SocketLocation.ForwardVector * 50'000;
 		bool bBlockingHit = GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStart, TracEnd ,ECollisionChannel::ECC_Visibility);
-
-		AActor* HitActor = OutHitResult.GetActor();
-		AAircraft* Aircraft = Cast<AAircraft>(HitActor);
-
-		UGameplayStatics::ApplyDamage(Aircraft, BaseDamage, GetController(),this, UDamageType::StaticClass());
-		
+		if(bBlockingHit == true)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactParticles, OutHitResult.ImpactPoint);
+			AActor* HitActor = OutHitResult.GetActor();
+			AAircraft* Aircraft = Cast<AAircraft>(HitActor);
+			
+			if(Aircraft)
+			{
+				UGameplayStatics::ApplyDamage(Aircraft, BaseDamage, GetController(),this, UDamageType::StaticClass());
+			}
+		}
 	}
 }
 
@@ -229,7 +234,7 @@ void AAircraft::Tick(float DeltaTime)
 
 	Collision->AddTorqueInDegrees(PhysXAngularVelocity, NAME_None, true);
 	AddSpeed();
-	Collision->AddForce(FVector(0.f, 0.f, -15000.f), NAME_None, true);
+	Collision->AddForce(FVector(0.f, 0.f, -1500.f), NAME_None, true);
 	
 	if (ZeroThrottle)
 	{
