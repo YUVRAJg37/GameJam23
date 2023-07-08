@@ -6,10 +6,20 @@
 #include "GameFramework/Pawn.h"
 #include "Aircraft.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+class USoundCue;
+class UParticleSystem;
+
 UCLASS()
 class GAMEJAM_API AAircraft : public APawn
 {
 	GENERATED_BODY()
+
+private:
+	float Health;
+	float MaxHealth;
+	float BaseDamage;
 
 public:
 
@@ -19,32 +29,47 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
 protected:
 
 	virtual void BeginPlay() override;
 
+	void ShootButtonPressed();
+
+	void ShootButtonReleased();
+
+	void AutoShootReset();
+
+	void StartShootTimer();
+	
+	void Shoot();
+
+	void SpawnParticlesAndLineTrace(FName SocketName);
+
+	void Explode();
+	
 private:
-
+	
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+		TObjectPtr<UStaticMeshComponent> Collision;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		UStaticMeshComponent* Collision;
+		TObjectPtr<USkeletalMeshComponent> PlaneMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		USkeletalMeshComponent* PlaneMesh;
+		TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		class USpringArmComponent* CameraBoom;
+		TObjectPtr<UCameraComponent> Camera;
 
-	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		class UCameraComponent* Camera;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Data", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 		float CurrentThrottle = 100.f;
 
-	UPROPERTY(EditAnywhere, Category = "Plane Data")
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxThrottle = 750.f;
 
-	UPROPERTY(EditAnywhere, Category = "Plane Data")
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxSpeed = 50.f;
 
 	bool MoveUpThrottle;
@@ -74,5 +99,30 @@ private:
 
 	void OffThrottle(float Value);
 
-	void Speed();
+	void AddSpeed();
+
+	//Sounds
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<USoundCue> FireSound;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<USoundCue> ExplodeSound;
+
+	//FX
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UParticleSystem> MuzzleFlash;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UParticleSystem> ExplodeParticles;
+
+	
+	bool bShootButtonPressed;
+	bool bShouldShoot;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float FireRate;
+
+	
+	FTimerHandle FireRateHandle;
+	
 };
