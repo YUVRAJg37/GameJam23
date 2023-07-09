@@ -15,14 +15,15 @@ AAircraft::AAircraft()
 	MaxHealth = 100.f;
 
 	CurrentThrottle = 100.f;
-	MaxThrottle = 750.f;
+	MinThrottle = 300.f;
+	MaxThrottle = 500.f;
 	MaxSpeed = 50.f;
 	
 	bShouldShoot = true;
 	FireRate = 1200.f;
 	MinFireRate = 400.f;
 	FireRateIncrement = -100.f;
-	HealthIncrement +=50.f;
+	HealthIncrement = 50.f;
 	ExplodeVelocity = 0.f;
 	
 	Collision = CreateDefaultSubobject<UStaticMeshComponent>("Plane Collision");
@@ -244,11 +245,11 @@ void AAircraft::Tick(float DeltaTime)
 	
 	if (MoveUpThrottle)
 	{
-		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, MinThrottle, MaxThrottle);
+		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, MinThrottle , MaxThrottle);
 	}
 	else if (MoveDownThrottle)
 	{
-		CurrentThrottle = FMath::Clamp(CurrentThrottle - 1.f, 0.f, MaxThrottle);
+		CurrentThrottle = FMath::Clamp(CurrentThrottle - 1.f, MinThrottle , MaxThrottle);
 		
 	}
 

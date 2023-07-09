@@ -88,7 +88,10 @@ private:
 		float CurrentThrottle = 100.f;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		float MaxThrottle = 750.f;
+		float MaxThrottle = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+		float MinThrottle = 500.f;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxSpeed = 50.f;
