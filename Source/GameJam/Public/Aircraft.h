@@ -40,8 +40,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float ExplodeVelocity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
-	float MinThrottle;
 	
 public:
 
@@ -91,10 +89,10 @@ private:
 		float CurrentThrottle = 100.f;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		float MaxThrottle = 500.f;
+		float MaxThrottle;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		float MinThrottle = 500.f;
+		float MinThrottle;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxSpeed = 50.f;

@@ -5,8 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
-AAircraft::AAircraft() :
-MinThrottle(400)
+AAircraft::AAircraft() 
 {
 
 	PrimaryActorTick.bCanEverTick = true;
@@ -17,7 +16,7 @@ MinThrottle(400)
 
 	CurrentThrottle = 100.f;
 	MinThrottle = 300.f;
-	MaxThrottle = 500.f;
+	MaxThrottle = 350.f;
 	MaxSpeed = 50.f;
 	
 	bShouldShoot = true;
