@@ -5,7 +5,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
-AAircraft::AAircraft()
+AAircraft::AAircraft() :
+MinThrottle(400)
 {
 
 	PrimaryActorTick.bCanEverTick = true;
