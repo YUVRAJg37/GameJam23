@@ -118,7 +118,7 @@ void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 			GEngine->GameViewport->GetViewportSize(ViewportSize);
 		}
 
-		FVector2D CrosshairLocation =  { (ViewportSize.X / 2.f), ((ViewportSize.Y / 2.f) - 100.f) };
+		FVector2D CrosshairLocation =  { (ViewportSize.X / 2.f), ((ViewportSize.Y / 2.f) + 150.f ) };
 
 		FVector CrosshairWorldPosition;
 		FVector CrosshairWorldDirection;
@@ -134,6 +134,8 @@ void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactParticles, OutHitResult.ImpactPoint);
             AActor* HitActor = OutHitResult.GetActor();
+
+			TraceHitActor = HitActor;
 			/*
 			 * if(AAircraft* Turret = Cast<>(HitActor))
 			 * {
