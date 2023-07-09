@@ -40,8 +40,6 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float ExplodeVelocity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
-	float MinThrottle;
 	
 public:
 
@@ -91,12 +89,15 @@ private:
 		float CurrentThrottle = 100.f;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
-		float MaxThrottle = 750.f;
+		float MaxThrottle;
+
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+		float MinThrottle;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxSpeed = 50.f;
 
-	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float ImaginaryGravity = -1500.f;
 	
 	bool MoveUpThrottle;
@@ -145,7 +146,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UParticleSystem> ImpactParticles;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	bool bShootButtonPressed;
+
 	bool bShouldShoot;
 
 	double FireTimer;
@@ -153,4 +156,7 @@ private:
 	FTimerHandle FireRateHandle;
 
 	FVector CurrentVelocity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	AActor* TraceHitActor;
 };

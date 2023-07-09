@@ -5,8 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
-AAircraft::AAircraft() :
-MinThrottle(400)
+AAircraft::AAircraft() 
 {
 
 	PrimaryActorTick.bCanEverTick = true;
@@ -16,14 +15,15 @@ MinThrottle(400)
 	MaxHealth = 100.f;
 
 	CurrentThrottle = 100.f;
-	MaxThrottle = 750.f;
+	MinThrottle = 300.f;
+	MaxThrottle = 350.f;
 	MaxSpeed = 50.f;
 	
 	bShouldShoot = true;
 	FireRate = 1200.f;
 	MinFireRate = 400.f;
 	FireRateIncrement = -100.f;
-	HealthIncrement +=50.f;
+	HealthIncrement = 50.f;
 	ExplodeVelocity = 0.f;
 	
 	Collision = CreateDefaultSubobject<UStaticMeshComponent>("Plane Collision");
@@ -118,7 +118,7 @@ void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 			GEngine->GameViewport->GetViewportSize(ViewportSize);
 		}
 
-		FVector2D CrosshairLocation =  { (ViewportSize.X / 2.f), ((ViewportSize.Y / 2.f) - 100.f) };
+		FVector2D CrosshairLocation =  { (ViewportSize.X / 2.f), ((ViewportSize.Y / 2.f) + 150.f ) };
 
 		FVector CrosshairWorldPosition;
 		FVector CrosshairWorldDirection;
@@ -134,6 +134,8 @@ void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 		{
 			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactParticles, OutHitResult.ImpactPoint);
             AActor* HitActor = OutHitResult.GetActor();
+
+			TraceHitActor = HitActor;
 			/*
 			 * if(AAircraft* Turret = Cast<>(HitActor))
 			 * {
@@ -245,11 +247,11 @@ void AAircraft::Tick(float DeltaTime)
 	
 	if (MoveUpThrottle)
 	{
-		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, MinThrottle, MaxThrottle);
+		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, MinThrottle , MaxThrottle);
 	}
 	else if (MoveDownThrottle)
 	{
-		CurrentThrottle = FMath::Clamp(CurrentThrottle - 1.f, 0.f, MaxThrottle);
+		CurrentThrottle = FMath::Clamp(CurrentThrottle - 1.f, MinThrottle , MaxThrottle);
 		
 	}
 
