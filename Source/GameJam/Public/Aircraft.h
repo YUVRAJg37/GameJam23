@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -27,6 +25,21 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float MinFireRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float FireRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float FireRateIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float HealthIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float ExplodeVelocity;
+	
 public:
 
 	AAircraft();
@@ -50,17 +63,19 @@ protected:
 	void StartShootTimer();
 	
 	void Shoot();
-
+	
 	void SpawnParticlesAndLineTrace(FName SocketName);
 
+	UFUNCTION(BlueprintCallable)
 	void Explode();
+
 	
 private:
 	
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		TObjectPtr<UStaticMeshComponent> Collision;
 
-	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Plane Properties", meta= (AllowPrivateAccess="true"))
 		TObjectPtr<USkeletalMeshComponent> PlaneMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
@@ -124,14 +139,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UParticleSystem> ImpactParticles;
 	
-	
 	bool bShootButtonPressed;
 	bool bShouldShoot;
 
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	float FireRate;
-
+	double FireTimer;
 	
 	FTimerHandle FireRateHandle;
-	
+
+	FVector CurrentVelocity;
 };
