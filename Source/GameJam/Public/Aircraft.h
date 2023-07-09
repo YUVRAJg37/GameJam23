@@ -93,6 +93,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxSpeed = 50.f;
 
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+	float ImaginaryGravity = -1500.f;
+	
 	bool MoveUpThrottle;
 	bool MoveDownThrottle;
 	bool ZeroThrottle;

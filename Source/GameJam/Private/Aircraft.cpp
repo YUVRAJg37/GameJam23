@@ -38,7 +38,7 @@ AAircraft::AAircraft()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 2600.f;
-	CameraBoom->bEnableCameraLag = false;//
+	CameraBoom->bEnableCameraLag = false;
 	CameraBoom->bEnableCameraRotationLag = false;
 	CameraBoom->AddRelativeRotation(FRotator(-20.f, 0.f, 0.f));
 
@@ -244,18 +244,20 @@ void AAircraft::Tick(float DeltaTime)
 	
 	if (MoveUpThrottle)
 	{
-		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, 0.f, MaxThrottle);
+		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, MinThrottle, MaxThrottle);
 	}
 	else if (MoveDownThrottle)
 	{
 		CurrentThrottle = FMath::Clamp(CurrentThrottle - 1.f, 0.f, MaxThrottle);
+		
 	}
 
 	const FVector PhysXAngularVelocity = (Collision->GetPhysicsAngularVelocityInDegrees() * -1.f) / (0.75f);
 
 	Collision->AddTorqueInDegrees(PhysXAngularVelocity, NAME_None, true);
 	AddSpeed();
-	//Collision->AddForce(FVector(0.f, 0.f, -1500.f), NAME_None, true);
+	
+	Collision->AddForce(FVector(0.f, 0.f, ImaginaryGravity), NAME_None, true);
 	
 	if (ZeroThrottle)
 	{
