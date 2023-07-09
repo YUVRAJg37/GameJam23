@@ -11,7 +11,7 @@ AAircraft::AAircraft()
 	PrimaryActorTick.bCanEverTick = true;
 
 	BaseDamage = 4.f;
-	Health = 100.f;
+	Health = 10.f;
 	MaxHealth = 100.f;
 
 	CurrentThrottle = 100.f;
@@ -19,7 +19,11 @@ AAircraft::AAircraft()
 	MaxSpeed = 50.f;
 	
 	bShouldShoot = true;
-	FireRate = 0.2f;
+	FireRate = 1200.f;
+	MinFireRate = 400.f;
+	FireRateIncrement = -100.f;
+	HealthIncrement +=50.f;
+	ExplodeVelocity = 0.f;
 	
 	Collision = CreateDefaultSubobject<UStaticMeshComponent>("Plane Collision");
 	SetRootComponent(Collision);
@@ -34,7 +38,7 @@ AAircraft::AAircraft()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 2600.f;
-	CameraBoom->bEnableCameraLag = false;//
+	CameraBoom->bEnableCameraLag = false;
 	CameraBoom->bEnableCameraRotationLag = false;
 	CameraBoom->AddRelativeRotation(FRotator(-20.f, 0.f, 0.f));
 
@@ -75,7 +79,8 @@ void AAircraft::StartShootTimer()
 	{
 		Shoot();
 		bShouldShoot = false;
-		GetWorldTimerManager().SetTimer(FireRateHandle, this,&AAircraft::AutoShootReset, FireRate);
+		FireTimer = (1/(FireRate/60));
+		GetWorldTimerManager().SetTimer(FireRateHandle, this,&AAircraft::AutoShootReset, FireTimer);
 	}
 }
 
@@ -93,6 +98,7 @@ void AAircraft::Shoot()
 	}
 }
 
+
 void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 {
 	
@@ -104,16 +110,36 @@ void AAircraft::SpawnParticlesAndLineTrace(FName SocketName)
 		PlaneMesh->GetSocketWorldLocationAndRotation(SocketName,SocketLocation,SocketRotation);
 		UGameplayStatics::SpawnEmitterAtLocation(this, MuzzleFlash, SocketLocation,SocketRotation);
 
-		FHitResult OutHitResult;
-		FVector TraceStart = SocketLocation.ForwardVector;
-		FVector TracEnd = SocketLocation.ForwardVector * 50'000;
-		bool bBlockingHit = GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStart, TracEnd ,ECollisionChannel::ECC_Visibility);
+		FVector2D ViewportSize;
 
-		AActor* HitActor = OutHitResult.GetActor();
-		AAircraft* Aircraft = Cast<AAircraft>(HitActor);
+		if(GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+		}
 
-		UGameplayStatics::ApplyDamage(Aircraft, BaseDamage, GetController(),this, UDamageType::StaticClass());
+		FVector2D CrosshairLocation =  { (ViewportSize.X / 2.f), ((ViewportSize.Y / 2.f) - 100.f) };
+
+		FVector CrosshairWorldPosition;
+		FVector CrosshairWorldDirection;
 		
+		bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this,0),CrosshairLocation, CrosshairWorldPosition, CrosshairWorldDirection);
+		
+		FHitResult OutHitResult;
+		
+		FVector TraceStart = CrosshairWorldPosition;
+		FVector TraceEnd = CrosshairWorldPosition + (CrosshairWorldDirection * 50'000);
+		
+		if(bool bBlockingHit = GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStart, TraceEnd ,ECollisionChannel::ECC_Visibility,FCollisionQueryParams::DefaultQueryParam,FCollisionResponseParams::DefaultResponseParam))
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactParticles, OutHitResult.ImpactPoint);
+            AActor* HitActor = OutHitResult.GetActor();
+			/*
+			 * if(AAircraft* Turret = Cast<>(HitActor))
+			 * {
+			 *	UGameplayStatics::ApplyDamage(Turret, BaseDamage, GetController(),this, UDamageType::StaticClass());
+			 * }
+			*/  
+		}
 	}
 }
 
@@ -218,23 +244,26 @@ void AAircraft::Tick(float DeltaTime)
 	
 	if (MoveUpThrottle)
 	{
-		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, 0.f, MaxThrottle);
+		CurrentThrottle = FMath::Clamp(CurrentThrottle + 1.f, MinThrottle, MaxThrottle);
 	}
 	else if (MoveDownThrottle)
 	{
 		CurrentThrottle = FMath::Clamp(CurrentThrottle - 1.f, 0.f, MaxThrottle);
+		
 	}
 
 	const FVector PhysXAngularVelocity = (Collision->GetPhysicsAngularVelocityInDegrees() * -1.f) / (0.75f);
 
 	Collision->AddTorqueInDegrees(PhysXAngularVelocity, NAME_None, true);
 	AddSpeed();
-	Collision->AddForce(FVector(0.f, 0.f, -1500.f), NAME_None, true);
+	
+	Collision->AddForce(FVector(0.f, 0.f, ImaginaryGravity), NAME_None, true);
 	
 	if (ZeroThrottle)
 	{
 		CurrentThrottle = UKismetMathLibrary::FInterpTo_Constant(CurrentThrottle, 0.f, UGameplayStatics::GetWorldDeltaSeconds(this), 500.f);
 	}
+	
 }
 
 float AAircraft::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,

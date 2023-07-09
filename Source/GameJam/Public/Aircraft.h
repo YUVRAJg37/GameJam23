@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -17,10 +15,31 @@ class GAMEJAM_API AAircraft : public APawn
 	GENERATED_BODY()
 
 private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
 	float BaseDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float MinFireRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float FireRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float FireRateIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float HealthIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Plane Properties", meta = (AllowPrivateAccess = "true"))
+	float ExplodeVelocity;
+	
 public:
 
 	AAircraft();
@@ -44,17 +63,19 @@ protected:
 	void StartShootTimer();
 	
 	void Shoot();
-
+	
 	void SpawnParticlesAndLineTrace(FName SocketName);
 
+	UFUNCTION(BlueprintCallable)
 	void Explode();
+
 	
 private:
 	
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		TObjectPtr<UStaticMeshComponent> Collision;
 
-	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Plane Properties", meta= (AllowPrivateAccess="true"))
 		TObjectPtr<USkeletalMeshComponent> PlaneMesh;
 
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
@@ -72,6 +93,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Plane Properties")
 		float MaxSpeed = 50.f;
 
+	UPROPERTY(EditAnywhere, Category = "Plane Properties")
+	float ImaginaryGravity = -1500.f;
+	
 	bool MoveUpThrottle;
 	bool MoveDownThrottle;
 	bool ZeroThrottle;
@@ -115,14 +139,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UParticleSystem> ExplodeParticles;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UParticleSystem> ImpactParticles;
 	
 	bool bShootButtonPressed;
 	bool bShouldShoot;
 
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	float FireRate;
-
+	double FireTimer;
 	
 	FTimerHandle FireRateHandle;
-	
+
+	FVector CurrentVelocity;
 };
